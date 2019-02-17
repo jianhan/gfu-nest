@@ -1,0 +1,28 @@
+version: '3.3'
+services:
+  scrape:
+    # The first directive in the web service is to build the image based on our Dockerfile. This will recreate the image we used before, but it will now be named according to the project we are in
+    build: .
+    # command will start the application
+    command: npm run scrape
+    # This section will mount paths between the host and the container.
+    volumes:
+      # This will mount the root directory to our working directory in the container.
+      - .:/usr/app/
+      # his will mount the node_modules directory to the host machine using the buildtime directory.
+      - /usr/app/node_modules
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+    # restart: always
+
+# Names our volume
+volumes:
+  mongo-data:
+  mongo-config:
