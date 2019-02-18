@@ -7,7 +7,9 @@ import { Provider, AuthService } from '../auth.service';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private readonly authService: AuthService) {
     super({
-      callbackURL: 'http://localhost:3000/auth/google/callback',
+      clientID: process.env.OAUTH_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.HOMEPAGE_URL + 'auth/google/callback',
       passReqToCallback: true,
       scope: ['profile'],
     });
@@ -18,11 +20,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     accessToken: string,
     refreshToken: string,
     profile,
-    done: Function,
+    done,
   ) {
     try {
-      console.log(profile);
-
       const jwt: string = await this.authService.validateOAuthLogin(
         profile.id,
         Provider.GOOGLE,
