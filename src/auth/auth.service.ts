@@ -10,10 +10,7 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import { OAuth2Client } from 'google-auth-library';
 import { sign } from 'jsonwebtoken';
-
-export enum Provider {
-  GOOGLE = 'google',
-}
+import { Provider } from './providers';
 
 @Injectable()
 export class AuthService {
