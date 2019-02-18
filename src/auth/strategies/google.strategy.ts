@@ -4,6 +4,7 @@ import { Strategy } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
 import { getThirdPartyCallbackUrl } from '../functions';
 import { Provider } from '../providers';
+import { CreateOauthUserDto } from '../../users/dto/create-oauth-user.dto';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -13,7 +14,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientSecret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
       callbackURL: getThirdPartyCallbackUrl(Provider.GOOGLE),
       passReqToCallback: true,
-      scope: ['profile'],
+      scope: ['profile', 'email'],
     });
   }
 
@@ -21,21 +22,25 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     request: any,
     accessToken: string,
     refreshToken: string,
-    profile,
+    profile: any,
     done,
   ) {
     try {
-      const jwt: string = await this.authService.validateOAuthLogin(
-        profile.id,
+      const createOauthUserDto: CreateOauthUserDto = new CreateOauthUserDto(
+        profile.photos[0].value,
+        profile.displayName,
+        profile.emails[0].value,
         Provider.GOOGLE,
+        profile.id,
+      );
+      const jwt: string = await this.authService.validateOAuthLogin(
+        createOauthUserDto,
       );
       const user = {
         jwt,
       };
-
       done(null, user);
     } catch (err) {
-      // console.log(err)
       done(err, false);
     }
   }

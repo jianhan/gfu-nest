@@ -3,7 +3,6 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto } from '../users/dto/login-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -11,6 +10,8 @@ import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2clien
 import { OAuth2Client } from 'google-auth-library';
 import { sign } from 'jsonwebtoken';
 import { Provider } from './providers';
+import { User } from '../users/user.interface';
+import { CreateOauthUserDto } from '../users/dto/create-oauth-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -54,20 +55,21 @@ export class AuthService {
   }
 
   async validateOAuthLogin(
-    thirdPartyId: string,
-    provider: Provider,
+    createOauthUserDto: CreateOauthUserDto,
   ): Promise<string> {
     try {
-      // You can add some registration logic here,
-      // to register the user using their thirdPartyId (in this case their googleId)
-      // let user: IUser = await this.usersService.findOneByThirdPartyId(thirdPartyId, provider);
+      let user: User = await this.usersService.findOneByProviderAndId(
+        createOauthUserDto.provider,
+        createOauthUserDto.providerId,
+      );
 
-      // if (!user)
-      // user = await this.usersService.registerOAuthUser(thirdPartyId, provider);
-
+      if (!user) {
+        user = await this.usersService.createOauthUser(createOauthUserDto);
+      }
+      console.log(user, '------');
       const payload = {
-        thirdPartyId,
-        provider,
+        provider: createOauthUserDto.provider,
+        providerId: createOauthUserDto.providerId,
       };
 
       const jwt: string = sign(payload, this.JWT_SECRET_KEY, {
