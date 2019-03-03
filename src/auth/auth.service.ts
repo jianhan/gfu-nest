@@ -9,7 +9,6 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import { OAuth2Client } from 'google-auth-library';
 import { sign } from 'jsonwebtoken';
-import { Provider } from './providers';
 import { User } from '../users/user.interface';
 import { CreateOauthUserDto } from '../users/dto/create-oauth-user.dto';
 
