@@ -21,8 +21,22 @@ services:
       - mongo-data:/data/db
       - mongo-config:/data/configdb
     # restart: always
-
+  mysql:
+    image: mysql:5.7
+    # restart: always
+    environment:
+      MYSQL_DATABASE: 'gfu'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-db:/var/lib/mysql
 # Names our volume
 volumes:
   mongo-data:
   mongo-config:
+  mysql-db:

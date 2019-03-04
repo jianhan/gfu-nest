@@ -1,0 +1,7 @@
+{
+  "type": "mongodb",
+  "host": "localhost",
+  "database": "gfu",
+  "entities": ["src/**/**.entity{.ts,.js}"],
+  "synchronize": true
+}
