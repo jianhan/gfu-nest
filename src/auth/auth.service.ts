@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { LoginUserDto } from '../users/dto/login-user.dto';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users/services/users.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import { OAuth2Client } from 'google-auth-library';
