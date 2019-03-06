@@ -18,11 +18,6 @@ export class UsersService {
     return this.userRepository.create(user);
   }
 
-  // async create(createUserDto: CreateUserDto) {
-  //   const createdUser = new this.userModel(createUserDto);
-  //   return await createdUser.save();
-  // }
-
   async findOneByEmail(email): Model<User> {
     return await this.userRepository.findOne({ email });
   }
@@ -32,12 +27,15 @@ export class UsersService {
     providerId: string,
   ): Model<User> {
     return await this.userRepository.findOne({
-      provider: provider,
-      providerId: providerId,
+      where: { provider: { id: providerId, name: provider } },
     });
   }
 
-  async createOauthUser(dto: CreateOauthUserDto): Model<User> {
-    return await this.userModel.create(dto);
+  createOauthUser(dto: CreateOauthUserDto): Model<User> {
+    const user = Object.assign(new User(), dto, {
+      provider: { id: dto.providerId, name: dto.provider },
+    });
+
+    return this.userRepository.create(user);
   }
 }

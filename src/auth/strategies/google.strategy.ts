@@ -5,13 +5,17 @@ import { AuthService } from '../auth.service';
 import { getThirdPartyCallbackUrl } from '../functions';
 import { Provider } from '../providers';
 import { CreateOauthUserDto } from '../../users/dto/create-oauth-user.dto';
+import { ConfigService } from '../../config/config.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {
     super({
-      clientID: process.env.OAUTH_GOOGLE_CLIENT_ID,
-      clientSecret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
+      clientID: configService.getOauthGoogleClientId,
+      clientSecret: configService.getOauthGoogleClientSecret,
       callbackURL: getThirdPartyCallbackUrl(Provider.GOOGLE),
       passReqToCallback: true,
       scope: ['profile', 'email'],
@@ -26,8 +30,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done,
   ) {
     try {
+      console.log(profile);
       const createOauthUserDto: CreateOauthUserDto = new CreateOauthUserDto(
         profile.photos[0].value,
+        profile.displayName,
         profile.displayName,
         profile.emails[0].value,
         Provider.GOOGLE,

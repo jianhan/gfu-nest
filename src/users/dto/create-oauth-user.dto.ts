@@ -1,20 +1,23 @@
 import { Provider } from '../../auth/providers';
 
 export class CreateOauthUserDto {
-  readonly imageUrl: string;
-  readonly name: string;
+  readonly avatarUrl: string;
+  readonly firstName: string;
+  readonly lastName: string;
   readonly email: string;
   readonly provider: Provider;
   readonly providerId: string;
   constructor(
-    imageUrl: string,
-    name: string,
+    avatarUrl: string,
+    firstName: string,
+    lastName: string,
     email: string,
     provider: Provider,
     providerId: string,
   ) {
-    this.imageUrl = imageUrl;
-    this.name = name;
+    this.avatarUrl = avatarUrl;
+    this.firstName = firstName;
+    this.lastName = lastName;
     this.email = email;
     this.provider = provider;
     this.providerId = providerId;

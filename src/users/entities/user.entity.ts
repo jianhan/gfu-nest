@@ -22,6 +22,5 @@ export class User {
   avatarUrl: string;
 
   @Column(type => Provider)
-  @Index({ unique: true })
   provider: Provider;
 }
