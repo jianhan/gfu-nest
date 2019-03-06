@@ -1,5 +1,8 @@
 import { Provider } from './providers';
 
-export const getThirdPartyCallbackUrl = (provider: Provider): string => {
-  return `${process.env.HOMEPAGE_URL}auth/${provider}/callback`;
+export const getThirdPartyCallbackUrl = (
+  homepageUrl: string,
+  provider: Provider,
+): string => {
+  return `${homepageUrl}auth/${provider}/callback`;
 };

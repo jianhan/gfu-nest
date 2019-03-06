@@ -14,9 +14,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     private readonly configService: ConfigService,
   ) {
     super({
-      clientID: configService.getOauthGoogleClientId,
-      clientSecret: configService.getOauthGoogleClientSecret,
-      callbackURL: getThirdPartyCallbackUrl(Provider.GOOGLE),
+      clientID: configService.getOauthGoogleClientId(),
+      clientSecret: configService.getOauthGoogleClientSecret(),
+      callbackURL: getThirdPartyCallbackUrl(
+        configService.getHomePageUrl(),
+        Provider.GOOGLE,
+      ),
       passReqToCallback: true,
       scope: ['profile', 'email'],
     });
@@ -50,4 +53,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(err, false);
     }
   }
+
+  private getThirdPartyCallbackUrl = (provider: Provider): string => {
+    return `${process.env.HOMEPAGE_URL}auth/${provider}/callback`;
+  };
 }
