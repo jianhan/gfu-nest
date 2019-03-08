@@ -65,7 +65,7 @@ export class AuthService {
       if (!user) {
         user = await this.usersService.createOauthUser(createOauthUserDto);
       }
-      console.log(user, '------');
+
       const payload = {
         provider: createOauthUserDto.provider,
         providerId: createOauthUserDto.providerId,

@@ -34,6 +34,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ) {
     try {
       console.log(profile);
+
       const createOauthUserDto: CreateOauthUserDto = new CreateOauthUserDto(
         profile.photos[0].value,
         profile.displayName,
@@ -53,8 +54,4 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(err, false);
     }
   }
-
-  private getThirdPartyCallbackUrl = (provider: Provider): string => {
-    return `${process.env.HOMEPAGE_URL}auth/${provider}/callback`;
-  };
 }

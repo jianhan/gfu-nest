@@ -84,7 +84,7 @@ export class ConfigService {
    * @memberof ConfigService
    */
   public getOauthGoogleClientSecret(): string {
-    return this.envConfig.OAUTH_GOOGLE_CLIENT_ID;
+    return this.envConfig.OAUTH_GOOGLE_CLIENT_SECRET;
   }
 
   /**
