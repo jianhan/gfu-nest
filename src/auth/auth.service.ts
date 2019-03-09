@@ -9,8 +9,9 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
 import { OAuth2Client } from 'google-auth-library';
 import { sign } from 'jsonwebtoken';
-import { User } from '../users/user.interface';
 import { CreateOauthUserDto } from '../users/dto/create-oauth-user.dto';
+import { Provider } from '../users/entities/provider.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -57,13 +58,14 @@ export class AuthService {
     createOauthUserDto: CreateOauthUserDto,
   ): Promise<string> {
     try {
-      let user: User = await this.usersService.findOneByProviderAndId(
-        createOauthUserDto.provider,
-        createOauthUserDto.providerId,
-      );
-
+      const provider = new Provider();
+      provider.name = createOauthUserDto.provider;
+      provider.id = createOauthUserDto.providerId;
+      let user: User = await this.usersService.findOneByProviderAndId(provider);
       if (!user) {
         user = await this.usersService.createOauthUser(createOauthUserDto);
+      } else {
+        this.usersService.updateOauthUser(user.id, createOauthUserDto);
       }
 
       const payload = {

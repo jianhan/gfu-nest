@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Provider } from '../../auth/providers';
 import { CreateOauthUserDto } from '../dto/create-oauth-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult, ObjectID } from 'typeorm';
 import { CreateRegisteredUserDto } from '../dto/create-registered-user.dto';
+import { Provider } from '../entities/provider.entity';
 
 @Injectable()
 export class UsersService {
@@ -22,20 +22,30 @@ export class UsersService {
     return await this.userRepository.findOne({ email });
   }
 
-  async findOneByProviderAndId(
-    provider: Provider,
-    providerId: string,
-  ): Model<User> {
+  async findOneByProviderAndId(provider: Provider): Model<User> {
     return await this.userRepository.findOne({
-      where: { provider: { id: providerId, name: provider } },
+      where: { provider: { id: provider.id, name: provider.name } },
     });
   }
 
-  createOauthUser(dto: CreateOauthUserDto): Model<User> {
-    const user = Object.assign(new User(), dto, {
+  async createOauthUser(dto: CreateOauthUserDto): Model<User> {
+    const { provider, providerId, ...u } = dto;
+    const user = Object.assign(new User(), u, {
       provider: { id: dto.providerId, name: dto.provider },
     });
 
-    return this.userRepository.create(user);
+    return await this.userRepository.insert(user);
+  }
+
+  async updateOauthUser(
+    id: ObjectID,
+    dto: CreateOauthUserDto,
+  ): Promise<UpdateResult> {
+    return this.userRepository.update(
+      id,
+      Object.assign(new User(), dto, {
+        provider: { id: dto.providerId, name: dto.provider },
+      }),
+    );
   }
 }

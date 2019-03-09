@@ -1,7 +1,7 @@
-import { Entity, Column, ObjectIdColumn, ObjectID, Index } from 'typeorm';
+import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
 import { Provider } from './provider.entity';
 
-@Entity()
+@Entity('users')
 export class User {
   @ObjectIdColumn()
   id: ObjectID;

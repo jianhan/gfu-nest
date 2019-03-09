@@ -33,19 +33,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done,
   ) {
     try {
-      console.log(profile);
-
       const createOauthUserDto: CreateOauthUserDto = new CreateOauthUserDto(
-        profile.photos[0].value,
-        profile.displayName,
-        profile.displayName,
+        profile.photos[0].value.replace(/sz=50/gi, 'sz=250'),
+        profile.name.familyName,
+        profile.name.givenName,
         profile.emails[0].value,
         Provider.GOOGLE,
         profile.id,
       );
+
       const jwt: string = await this.authService.validateOAuthLogin(
         createOauthUserDto,
       );
+
       const user = {
         jwt,
       };
