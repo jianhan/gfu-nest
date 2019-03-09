@@ -58,18 +58,16 @@ export class AuthService {
     createOauthUserDto: CreateOauthUserDto,
   ): Promise<string> {
     try {
-      const provider = new Provider();
-      provider.name = createOauthUserDto.provider;
-      provider.id = createOauthUserDto.providerId;
+      const provider = new Provider(
+        createOauthUserDto.providerId,
+        createOauthUserDto.provider,
+      );
+
       let user: User = await this.usersService.findOneByProviderAndId(provider);
       if (!user) {
         user = await this.usersService.createOauthUser(createOauthUserDto);
       } else {
-        const updateResult = await this.usersService.updateOauthUser(
-          user,
-          createOauthUserDto,
-        );
-        console.log('----- found', user.id, createOauthUserDto, updateResult);
+        await this.usersService.updateOauthUser(user, createOauthUserDto);
       }
 
       const payload = {
