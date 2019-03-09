@@ -12,13 +12,16 @@ import { sign } from 'jsonwebtoken';
 import { CreateOauthUserDto } from '../users/dto/create-oauth-user.dto';
 import { Provider } from '../users/entities/provider.entity';
 import { User } from '../users/entities/user.entity';
+import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class AuthService {
-  private readonly JWT_SECRET_KEY = 'VERY_SECRET_KEY';
-  private _oauth2Client: OAuth2Client;
+  private oauth2Client: OAuth2Client;
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async validateUserByPassword(loginAttempt: LoginUserDto) {
     // This will be used for the initial login
@@ -70,14 +73,13 @@ export class AuthService {
         await this.usersService.updateOauthUser(user, createOauthUserDto);
       }
 
-      const payload = {
-        provider: createOauthUserDto.provider,
-        providerId: createOauthUserDto.providerId,
-      };
-
-      const jwt: string = sign(payload, this.JWT_SECRET_KEY, {
-        expiresIn: 3600,
-      });
+      const jwt: string = sign(
+        Object.assign({}, provider),
+        this.configService.getJWTSecretKey(),
+        {
+          expiresIn: 3600,
+        },
+      );
       return jwt;
     } catch (err) {
       throw new InternalServerErrorException('validateOAuthLogin', err.message);
@@ -89,7 +91,9 @@ export class AuthService {
       email: user.email,
     };
 
-    const jwt = sign(data, this.JWT_SECRET_KEY, { expiresIn: 3600 });
+    const jwt = sign(data, this.configService.getJWTSecretKey(), {
+      expiresIn: 3600,
+    });
 
     return {
       expiresIn: 3600,
@@ -98,6 +102,6 @@ export class AuthService {
   }
 
   async getToken(code: string): Promise<GetTokenResponse> {
-    return await this._oauth2Client.getToken(code);
+    return await this.oauth2Client.getToken(code);
   }
 }
