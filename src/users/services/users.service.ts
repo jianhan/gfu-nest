@@ -37,15 +37,12 @@ export class UsersService {
     return await this.userRepository.insert(user);
   }
 
-  async updateOauthUser(
-    id: ObjectID,
-    dto: CreateOauthUserDto,
-  ): Promise<UpdateResult> {
-    return this.userRepository.update(
-      id,
-      Object.assign(new User(), dto, {
-        provider: { id: dto.providerId, name: dto.provider },
-      }),
-    );
+  async updateOauthUser(user: User, dto: CreateOauthUserDto): Model<User> {
+    const { provider, providerId, ...u } = dto;
+    user = Object.assign(user, u, {
+      provider: { id: dto.providerId, name: dto.provider },
+    });
+
+    return await this.userRepository.save(user);
   }
 }

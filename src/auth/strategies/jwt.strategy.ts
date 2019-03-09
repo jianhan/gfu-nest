@@ -3,13 +3,17 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from '../auth.service';
 import { PassportStrategy } from '@nestjs/passport';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { ConfigService } from '../../config/config.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'VERY_SECRET_KEY',
+      secretOrKey: configService.getJWTSecretKey(),
     });
   }
 
@@ -28,7 +32,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
       // if (!validClaims)
       //    return done(new UnauthorizedException('invalid token claims'), false);
-      console.log(payload);
       done(null, payload);
     } catch (err) {
       throw new UnauthorizedException('unauthorized', err.message);

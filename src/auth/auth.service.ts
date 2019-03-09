@@ -65,7 +65,11 @@ export class AuthService {
       if (!user) {
         user = await this.usersService.createOauthUser(createOauthUserDto);
       } else {
-        this.usersService.updateOauthUser(user.id, createOauthUserDto);
+        const updateResult = await this.usersService.updateOauthUser(
+          user,
+          createOauthUserDto,
+        );
+        console.log('----- found', user.id, createOauthUserDto, updateResult);
       }
 
       const payload = {
