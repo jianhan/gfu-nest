@@ -22,4 +22,13 @@ export class CreateOauthUserDto {
     this.provider = provider;
     this.providerId = providerId;
   }
+
+  extract() {
+    const { provider, providerId, ...u } = this;
+    return {
+      u,
+      provider,
+      providerId,
+    };
+  }
 }

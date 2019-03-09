@@ -29,18 +29,18 @@ export class UsersService {
   }
 
   async createOauthUser(dto: CreateOauthUserDto): Model<User> {
-    const { provider, providerId, ...u } = dto;
+    const { provider, providerId, u } = dto.extract();
     const user = Object.assign(new User(), u, {
-      provider: { id: dto.providerId, name: dto.provider },
+      provider: { id: providerId, name: provider },
     });
 
     return await this.userRepository.insert(user);
   }
 
   async updateOauthUser(user: User, dto: CreateOauthUserDto): Model<User> {
-    const { provider, providerId, ...u } = dto;
+    const { provider, providerId, u } = dto.extract();
     user = Object.assign(user, u, {
-      provider: { id: dto.providerId, name: dto.provider },
+      provider: { id: providerId, name: provider },
     });
 
     return await this.userRepository.save(user);
